@@ -9,8 +9,10 @@ const distPath = path.join(__dirname, '..', 'dist')
 
 const app = express()
 const PORT = Number(process.env.PORT) || 3001
-const BOT_TOKEN = process.env.BOT_TOKEN
-const ADMIN_CHAT_ID = process.env.ADMIN_CHAT_ID
+// Fallback для демо на Render, если Environment не заполнен
+const BOT_TOKEN =
+  process.env.BOT_TOKEN || '8427406199:AAHEOJooaxsRFKjfx8bGn09uarrhta5dZeM'
+const ADMIN_CHAT_ID = process.env.ADMIN_CHAT_ID || '6820187970'
 
 app.use(cors())
 app.use(express.json())
