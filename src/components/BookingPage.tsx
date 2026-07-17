@@ -10,15 +10,27 @@ import {
 } from '../data'
 
 interface Props {
+  clientName?: string
+  clientUsername?: string
+  telegramId?: number
   onHaptic?: (style?: 'light' | 'medium' | 'heavy') => void
   onSuccess?: () => void
 }
 
 const stepLabels = ['Услуга', 'Мастер', 'Время', 'Готово']
+const API_URL = import.meta.env.VITE_API_URL || ''
 
-export function BookingPage({ onHaptic, onSuccess }: Props) {
+export function BookingPage({
+  clientName,
+  clientUsername,
+  telegramId,
+  onHaptic,
+  onSuccess,
+}: Props) {
   const [step, setStep] = useState(0)
   const [done, setDone] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [draft, setDraft] = useState<BookingDraft>({
     serviceId: null,
     masterId: null,
@@ -37,10 +49,45 @@ export function BookingPage({ onHaptic, onSuccess }: Props) {
     setStep(nextStep)
   }
 
-  const confirm = () => {
+  const confirm = async () => {
+    if (!service || !master || !draft.date || !draft.time || submitting) return
+
     onHaptic?.('medium')
-    setDone(true)
-    onSuccess?.()
+    setSubmitting(true)
+    setError(null)
+
+    const dateLabel = dates.find((d) => d.iso === draft.date)?.label ?? draft.date
+
+    try {
+      const res = await fetch(`${API_URL}/api/book`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          serviceName: service.name,
+          masterName: master.name,
+          date: dateLabel,
+          time: draft.time,
+          price: formatPrice(service.price),
+          clientName: clientName || 'Гость',
+          clientUsername: clientUsername || null,
+          telegramId: telegramId || null,
+        }),
+      })
+
+      const data = (await res.json()) as { ok?: boolean; error?: string }
+
+      if (!res.ok || !data.ok) {
+        throw new Error(data.error || 'Не удалось отправить запись')
+      }
+
+      setDone(true)
+      onSuccess?.()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Ошибка отправки')
+      onHaptic?.('heavy')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   if (done && service && master && draft.date && draft.time) {
@@ -59,7 +106,7 @@ export function BookingPage({ onHaptic, onSuccess }: Props) {
           <br />
           {dateLabel}, {draft.time}
         </p>
-        <p className="chip">+{Math.round(service.price / 20)} баллов начислим после визита</p>
+        <p className="chip">Заявка ушла владельцу в Telegram</p>
         <div style={{ marginTop: 24 }}>
           <button
             className="btn btn-primary"
@@ -67,6 +114,7 @@ export function BookingPage({ onHaptic, onSuccess }: Props) {
             onClick={() => {
               setDone(false)
               setStep(0)
+              setError(null)
               setDraft({ serviceId: null, masterId: null, date: null, time: null })
             }}
           >
@@ -274,13 +322,20 @@ export function BookingPage({ onHaptic, onSuccess }: Props) {
               </div>
             </div>
 
+            {error && (
+              <p className="muted" style={{ color: 'var(--danger)', marginTop: 12 }}>
+                {error}
+              </p>
+            )}
+
             <button
               className="btn btn-primary"
               type="button"
               style={{ width: '100%', marginTop: 16 }}
-              onClick={confirm}
+              disabled={submitting}
+              onClick={() => void confirm()}
             >
-              Подтвердить запись
+              {submitting ? 'Отправка…' : 'Подтвердить запись'}
             </button>
           </motion.div>
         )}

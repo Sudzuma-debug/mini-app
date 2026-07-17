@@ -1,18 +1,48 @@
-# Остриё — Telegram Mini App
+# Демо-проект — Telegram Mini App
 
-Мини-приложение барбершопа на React + Vite: запись к мастеру, карта лояльности, анимации.
+React + Vite + Express. Заказы приходят вам в Telegram.
 
-## Запуск
+## Render (сайт + API вместе)
+
+1. Запушьте код на GitHub.
+2. На [render.com](https://render.com) → **New** → **Web Service** → этот репозиторий.
+3. Настройки:
+
+| Поле | Значение |
+|------|----------|
+| **Runtime** | Node |
+| **Build Command** | `npm install && npm run build` |
+| **Start Command** | `npm start` |
+
+4. Environment Variables:
+
+| Key | Value |
+|-----|-------|
+| `BOT_TOKEN` | токен от BotFather |
+| `ADMIN_CHAT_ID` | ваш chat id |
+
+5. **Save** → дождитесь Deploy. Откройте `https://ваш-сервис.onrender.com`
+
+Не ставьте Start Command = `npm run dev` — из‑за этого была ошибка *Blocked request*.
+
+В BotFather укажите URL Render как Mini App.
+
+## Локально
 
 ```bash
 npm install
-npm run dev
+npm run build
+npm start
 ```
 
-Откройте URL из терминала в браузере или через [BotFather](https://t.me/BotFather) → Mini App.
+Или отдельно:
 
-## Стек
+```bash
+npm run dev:api   # терминал 1
+npm run dev       # терминал 2 → http://localhost:5173/
+```
 
-- React 19 + Vite + TypeScript
-- Framer Motion
-- Telegram WebApp SDK (`telegram-web-app.js`)
+## GitHub Pages
+
+Только фронт (без заказов), сборка с `VITE_BASE=/mini-app/`.
+Для заказов используйте Render.

@@ -18,7 +18,7 @@ export function ProfilePage({ name }: Props) {
         </div>
         <div>
           <h1>{name}</h1>
-          <p className="muted">Гость барбершопа Остриё</p>
+          <p className="muted">Гость демо-проекта</p>
         </div>
       </motion.div>
 
@@ -39,7 +39,7 @@ export function ProfilePage({ name }: Props) {
           </div>
           <div className="confirm-row">
             <span>Адрес</span>
-            <strong>ул. Пушкина, 17</strong>
+            <strong>Демо-локация</strong>
           </div>
           <div className="confirm-row">
             <span>Часы</span>

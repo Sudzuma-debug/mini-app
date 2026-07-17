@@ -34,7 +34,7 @@ export function HomePage({ name, onNavigate }: Props) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.25, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
         >
-          ОСТРИ<span>Ё</span>
+          ДЕМО
         </motion.h1>
 
         <motion.p
@@ -43,7 +43,7 @@ export function HomePage({ name, onNavigate }: Props) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
-          Запись к мастеру и карта лояльности — в одном мини-приложении.
+          Портфолио Telegram Mini App: запись, лояльность и уведомления о заказах.
         </motion.p>
 
         <motion.div

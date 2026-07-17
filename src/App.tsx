@@ -17,7 +17,7 @@ const pageMotion = {
 
 export default function App() {
   const [tab, setTab] = useState<TabId>('home')
-  const { firstName, haptic, notify } = useTelegram()
+  const { firstName, user, haptic, notify } = useTelegram()
 
   const changeTab = (next: TabId) => {
     haptic('light')
@@ -31,6 +31,9 @@ export default function App() {
           {tab === 'home' && <HomePage name={firstName} onNavigate={changeTab} />}
           {tab === 'book' && (
             <BookingPage
+              clientName={firstName}
+              clientUsername={user?.username}
+              telegramId={user?.id}
               onHaptic={haptic}
               onSuccess={() => notify('success')}
             />
